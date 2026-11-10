@@ -1,18 +1,33 @@
-import {pool} from '../../db/pool.js';
+import { z } from 'zod';
 
-// create UserSchema
+export const registerSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Name cannot be empty')
+    .max(255, 'Name cannot exceed 255 characters'),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email('Invalid email address')
+    .max(255, 'Email cannot exceed 255 characters'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters long')
+    .max(128, 'Password cannot exceed 128 characters'),
+});
 
-const UserSchema = async () => {
-  const client = await pool.connect();
-  try {
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL
-      );
-    `);
-  } finally {
-    client.release();
-  }
-}
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email('Invalid email address'),
+  password: z
+    .string()
+    .min(1, 'Password is required'),
+});
+
+export type RegisterInput = z.infer<typeof registerSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
