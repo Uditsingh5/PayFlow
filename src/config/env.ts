@@ -9,6 +9,9 @@ const envSchema = z.object({
   JWT_SECRET: z.string().trim().min(1, 'JWT_SECRET is required'),
   JWT_EXPIRES_IN: z.string().trim().default('1h'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  REDIS_URL: z.string().trim().default('redis://localhost:6379'),
+  KAFKA_BROKERS: z.string().trim().default('localhost:9092'),
+  KAFKA_CLIENT_ID: z.string().trim().default('payflow'),
 });
 
 const result = envSchema.safeParse(process.env);
